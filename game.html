@@ -16,6 +16,14 @@ canvas {
 var myGamePiece1;var myGamePiece2;var myGamePiece3;var myGamePiece4;
 var score=0;
 
+var timer=30;
+function Timer()
+{timer--;
+if(timer<=0) {clearInterval(reset);
+	alert(score);
+window.location.reload();}}
+var reset=setInterval(Timer,1000);
+
 
 
 
@@ -150,7 +158,7 @@ if(myGamePiece3.crashWith(ball)==true)
 if(myGamePiece4.crashWith(ball)==true) 
 	score++;
 
-document.getElementById("scores").innerHTML=score;
+document.getElementById("scores").innerHTML=score + "   " + timer;
 
 }
 
