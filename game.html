@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="startGame()">
+	
+<script>
+
+var myGamePiece1;var myGamePiece2;var myGamePiece3;var myGamePiece4;
+var score=0;
+
+
+
+
+
+
+function startGame() {
+   
+    myGamePiece1 = new component(50, 100, "red", 0, 260);
+    myGamePiece2 = new component(100, 50, "green", 280, 0);
+    myGamePiece3 = new component(100, 50, "yellow", 280, 520);
+    myGamePiece4 = new component(50, 100, "blue", 630, 260);
+    inner = new component(480, 390, "#FFFFFF", 100, 90);
+     myGameArea.start();
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = 680;
+        this.canvas.height = 570;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        this.interval = setInterval(updateGameArea,20);
+         window.addEventListener('keydown', function (e) {
+            myGameArea.key = e.keyCode;
+        })
+        window.addEventListener('keyup', function (e) {
+            myGameArea.key = false;
+        })
+    },
+    clear : function() {
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    },
+}
+
+function component(width, height, color, x, y) {
+    this.width = width;
+    this.height = height;
+    this.x = x;
+    this.y = y;
+    this.speedX = 0;
+    this.speedY = 0;
+    
+    this.update = function() {
+    ctx = myGameArea.context;
+    ctx.fillStyle = color;
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+   }
+
+   this.newPos = function(){
+   	this.x+=this.speedX;
+   	this.y+=this.speedY;
+   }
+
+   this.crashWith = function(ball) {
+        var myleft = this.x;
+        var myright = this.x + (this.width);
+        var mytop = this.y;
+        var mybottom = this.y + (this.height);
+        var otherleft = ball.pos.x;
+        var otherright = ball.pos.x + (ball.radius);
+        var othertop = ball.pos.y;
+        var otherbottom = ball.pos.y + (ball.radius);
+        var crash = true;
+        if ((mybottom < othertop) ||
+               (mytop > otherbottom) ||
+               (myright < otherleft) ||
+               (myleft > otherright)) {
+           crash = false;
+        }
+        return crash;
+    }
+
+}
+
+
+function updateGameArea() {
+
+	myGameArea.clear();
+
+    if (myGameArea.key && myGameArea.key == 37) {moveleft(); }
+    if (myGameArea.key && myGameArea.key == 39) {moveright(); }
+    if (myGameArea.key && myGameArea.key == 38) {moveup(); }
+    if (myGameArea.key && myGameArea.key == 40) {movedown(); }
+
+	inner.update();
+	myGamePiece4.newPos();
+	myGamePiece3.newPos();
+	myGamePiece2.newPos();
+	myGamePiece1.newPos();
+	myGamePiece4.update();
+	myGamePiece3.update();
+	myGamePiece2.update();
+	myGamePiece1.update();
+	drawBall();
+	ball.pos.x+=Math.cos(ball.slope)*ball.speed;
+	ball.pos.y+=Math.sin(ball.slope)*ball.speed;
+	if (ball.pos.x<=100+ball.radius||ball.pos.x>=580-ball.radius)
+		{ball.slope-=7600*Math.PI/180}
+    
+    if (ball.pos.y<=90+ball.radius||ball.pos.y>=480-ball.radius)
+		{ball.slope-=2760*Math.PI/180
+		}
+
+if(myGamePiece3.y<=450)
+		{myGamePiece3.speedY = 6;}
+	else if(myGamePiece3.y>=520)
+{myGamePiece3.speedY=0;}
+
+if(myGamePiece1.x>=70)
+		{myGamePiece1.speedX = -6;}
+	else if(myGamePiece1.x<=00)
+{myGamePiece1.speedX=0;}
+
+if(myGamePiece2.y>=70)
+		{myGamePiece2.speedY = -6;}
+	else if(myGamePiece2.y<=00)
+{myGamePiece2.speedY=0;}
+
+if(myGamePiece4.x<=560)
+		{myGamePiece4.speedX = 6;}
+	else if(myGamePiece4.x>=630)
+{myGamePiece4.speedX=0;}
+
+
+if(myGamePiece1.crashWith(ball)==true) 
+	score++;
+if(myGamePiece2.crashWith(ball)==true) 
+	score++;
+if(myGamePiece3.crashWith(ball)==true) 
+	score++;
+if(myGamePiece4.crashWith(ball)==true) 
+	score++;
+
+document.getElementById("scores").innerHTML=score;
+
+}
+
+function moveup(){
+	//for yellow square
+	myGamePiece3.speedY = -8;
+}
+function moveright(){
+	//for red square
+    myGamePiece1.speedX = 8;
+}
+function movedown(){
+	//for yellow square
+	myGamePiece2.speedY = 8;
+}
+function moveleft(){
+	//for red square
+    myGamePiece4.speedX = -8;
+}
+
+
+var ball={
+	pos:{x:320,y:320},
+	color: 'black',
+	speed: 5,
+	slope: Math.random()*2*Math.PI,
+	radius: 10
+}
+
+function drawBall()
+{ctx.beginPath();
+ctx.arc(ball.pos.x,ball.pos.y,ball.radius,0,2*Math.PI);
+ctx.fillStyle=ball.color;
+ctx.fill();}
+
+</script>
+ 
+ <p id="scores"></p>
+  
+
+
+
+
+</body>
+</html>
+
